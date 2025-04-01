@@ -21,8 +21,11 @@
         if (_a1b2c3d4e5.utm_campaign && _a1b2c3d4e5.utm_campaign.length > 0) {
             easyTradein.setAttribute("src", `https://civimart.ru/sell/phone?channel=mts_online&utm_campaign=${_a1b2c3d4e5.utm_campaign}`);
         }
+        
         easyTradein.sandbox = "allow-scripts allow-same-origin allow-forms";
-        easyTradein.onload = function () {
+        
+        // Вынесем обработчик в отдельную функцию
+        function setupIframe() {
             easyTradein.style.height = "10px";
             window.addEventListener('message', function (event) {
                 if (event.data.type === 'easyTradein_iframeHeight') {
@@ -30,6 +33,11 @@
                 }
             });
         }
+        
+        // Назначаем обработчик как onload и добавляем событие load
+        easyTradein.onload = setupIframe;
+        easyTradein.addEventListener('load', setupIframe);
+        
         function checkInitialHeight() {
             if (easyTradein.style.height === "10px") {
                 if (window.innerWidth <= 980) {
@@ -38,6 +46,11 @@
                     easyTradein.style.height = "100vh";
                 }
             }
+        }
+
+        // Вызываем setupIframe сразу, если фрейм уже загружен
+        if (easyTradein.contentDocument.readyState === 'complete') {
+            setupIframe();
         }
 
         setTimeout(checkInitialHeight, 1000);
