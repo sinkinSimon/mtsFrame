@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+</head>
+
+<body>
+    <div class="iframe-container" style="display: flex;">
+        <iframe id="easyTradein" src="https://civimart.ru/sell/phone?channel=mts_online" scrolling="no"
+            style="flex: 1; width: 100%; border: none; min-height: 100vh"></iframe>
+    </div>
+
+    <script>
+        const _a1b2c3d4e5 = new Proxy(new URLSearchParams(window.location.search), {
+            get: (searchParams, prop) => searchParams.get(prop)
+        });
+
+        const easyTradein = document.getElementById("easyTradein");
+
+        if (_a1b2c3d4e5.utm_campaign && _a1b2c3d4e5.utm_campaign.length > 0) {
+            easyTradein.setAttribute("src", `https://civimart.ru/sell/phone?channel=mts_online&utm_campaign=${_a1b2c3d4e5.utm_campaign}`);
+        }
+        easyTradein.sandbox = "allow-scripts allow-same-origin allow-forms";
+        easyTradein.onload = function () {
+            easyTradein.style.height = "10px";
+            window.addEventListener('message', function (event) {
+                if (event.data.type === 'easyTradein_iframeHeight') {
+                    easyTradein.style.height = event.data.height + 'px';
+                }
+            });
+        }
+        function checkInitialHeight() {
+            if (easyTradein.style.height === "10px") {
+                if (window.innerWidth <= 980) {
+                    easyTradein.style.height = "90vh";
+                } else {
+                    easyTradein.style.height = "100vh";
+                }
+            }
+        }
+
+        setTimeout(checkInitialHeight, 1000);
+        window.addEventListener("resize", checkInitialHeight);
+    </script>
+</body>
+
+</html>
